@@ -80,5 +80,5 @@ L'application utilise trois APIs gratuites accessibles directement :
 
 1. Clonez le projet :
    ```bash
-   git clone https://github.com/votre-utilisateur/crypto-dashboard.git
+   git clone https://github.com/HugoCoder1/reactjs-audition.git
    ```
