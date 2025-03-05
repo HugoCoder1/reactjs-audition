@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import {
@@ -60,9 +60,7 @@ const coinColors: Record<string, string> = {
 };
 
 export default function Crypto() {
-  const [error, setError] = useState<string | null>(null);
-
-  const { data, isLoading } = useQuery<Coin[]>({
+  const { data: crypto, isLoading } = useQuery<Coin[]>({
     queryKey: ["cryptocurrencies"], // Updated query key
     queryFn: async () => {
       const response = await axios.get(
@@ -70,19 +68,22 @@ export default function Crypto() {
       );
       return response.data;
     },
-    onError: (err: any) => {
-      setError("Erreur lors de la récupération des données.");
-    },
   });
 
   const chartData = useMemo(() => {
-    if (!data || !data[0]?.sparkline_in_7d?.price) return {}; // Return empty object if data is not loaded properly
+    if (!crypto || !crypto[0]?.sparkline_in_7d?.price) {
+      // Si les données sont manquantes, on retourne un objet vide valide
+      return {
+        labels: [],
+        datasets: [],
+      };
+    }
 
     return {
       labels:
-        data[0]?.sparkline_in_7d.price.map((_, index) => index.toString()) ||
+        crypto[0]?.sparkline_in_7d.price.map((_, index) => index.toString()) ||
         [],
-      datasets: data.map((coin) => ({
+      datasets: crypto.map((coin) => ({
         label: coin.name,
         data: coin.sparkline_in_7d.price,
         borderColor: coinColors[coin.id] || "#000000", // Utiliser une couleur spécifique pour chaque crypto
@@ -92,14 +93,10 @@ export default function Crypto() {
         fill: true,
       })),
     };
-  }, [data]);
+  }, [crypto]);
 
-  if (isLoading) {
+  if (isLoading || chartData.datasets.length === 0) {
     return <p>Chargement des données...</p>;
-  }
-
-  if (error || !data) {
-    return <p>{error || "Données non disponibles"}</p>;
   }
 
   return (
@@ -117,6 +114,26 @@ export default function Crypto() {
             options={{
               responsive: true,
               maintainAspectRatio: false, // Assurez-vous que le graphique prend toute la largeur sans se restreindre à un ratio spécifique
+              scales: {
+                x: {
+                  ticks: {
+                    maxRotation: 45, // Rotation des labels sur l'axe X pour éviter qu'ils se chevauchent
+                    minRotation: 0,
+                  },
+                },
+                y: {
+                  ticks: {
+                    precision: 0, // Arrondir les valeurs sur l'axe Y
+                    stepSize: 100000000, // Augmenter le pas des ticks pour mieux espacer les valeurs
+                  },
+                },
+              },
+              plugins: {
+                tooltip: {
+                  mode: "index",
+                  intersect: false,
+                },
+              },
             }}
           />
         </div>
@@ -134,7 +151,7 @@ export default function Crypto() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.map((coin) => (
+            {crypto?.map((coin) => (
               <TableRow key={coin.id}>
                 <TableCell>{coin.name}</TableCell>
                 <TableCell>{coin.symbol.toUpperCase()}</TableCell>

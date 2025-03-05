@@ -5,11 +5,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
-import { LucideIcon } from "lucide-react"; // Assurez-vous que LucideIcon est bien importé
+import { LucideIcon } from "lucide-react";
 
 export function NavMain({
   items,
@@ -17,7 +16,7 @@ export function NavMain({
   items: {
     title: string;
     url: string;
-    icon?: LucideIcon; // Les icônes sont facultatives
+    icon?: LucideIcon;
     isActive?: boolean;
     items?: {
       title: string;
@@ -40,11 +39,9 @@ export function NavMain({
                 {item.items.map((subItem) => (
                   <SidebarMenuSubItem key={subItem.title}>
                     {/* Enveloppez le bouton dans un composant Link */}
-                    <SidebarMenuSubButton asChild>
-                      <Link to={subItem.url}>
-                        <span>{subItem.title}</span>
-                      </Link>
-                    </SidebarMenuSubButton>
+                    <Link to={subItem.url}>
+                      <span>{subItem.title}</span>
+                    </Link>
                   </SidebarMenuSubItem>
                 ))}
               </SidebarMenuSub>

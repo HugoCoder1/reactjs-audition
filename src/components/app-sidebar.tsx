@@ -40,7 +40,7 @@ const data = {
     },
     {
       title: "Statistiques et graphiques Cryptomonnaie",
-      url: "/",
+      url: "/crypto",
       icon: BookOpen,
     },
   ],
