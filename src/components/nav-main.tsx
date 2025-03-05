@@ -30,10 +30,12 @@ export function NavMain({
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton tooltip={item.title}>
-              {item.icon && <item.icon />} {/* Affichage de l'icône */}
-              <Link to={item.url}>{item.title}</Link>
-            </SidebarMenuButton>
+            <Link to={item.url} className="hover:cursor-pointer">
+              <SidebarMenuButton tooltip={item.title}>
+                {item.icon && <item.icon />} {/* Affichage de l'icône */}
+                <Link to={item.url}>{item.title}</Link>
+              </SidebarMenuButton>
+            </Link>
             {item.items && (
               <SidebarMenuSub>
                 {item.items.map((subItem) => (
